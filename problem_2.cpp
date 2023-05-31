@@ -5,7 +5,45 @@ using namespace std;
 int solve(int n, vector<vector<int> >& edges, int distanceThreshold) {
     
   //complete the function
-   
+    const int INF = numeric_limits<int>::max();
+
+    vector<vector<int>> adjMatrix(n, vector<int>(n, INF));
+
+    for (const vector<int>& edge : edges) {
+        int u = edge[0];
+        int v = edge[1];
+        int weight = edge[2];
+        adjMatrix[u][v] = weight;
+        adjMatrix[v][u] = weight;
+    }
+
+    for (int k = 0; k < n; k++) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i != j && adjMatrix[i][k] != INF && adjMatrix[k][j] != INF) {
+                    adjMatrix[i][j] = min(adjMatrix[i][j], adjMatrix[i][k] + adjMatrix[k][j]);
+                }
+            }
+        }
+    }
+
+    int smallestReachableCities = n;
+    int cityWithSmallestReachable = -1;
+
+    for (int i = 0; i < n; i++) {
+        int reachableCount = 0;
+        for (int j = 0; j < n; j++) {
+            if (i != j && adjMatrix[i][j] <= distanceThreshold) {
+                reachableCount++;
+            }
+        }
+        if (reachableCount <= smallestReachableCities) {
+            smallestReachableCities = reachableCount;
+            cityWithSmallestReachable = i;
+        }
+    }
+
+    return cityWithSmallestReachable;
 }
 
 //do not modify the below code
